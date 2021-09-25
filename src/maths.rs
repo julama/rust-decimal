@@ -1,5 +1,10 @@
 use crate::prelude::*;
+use num_traits::{Float, NumCast};
+use core::num::FpCategory;
+use std::iter::{Product};
 
+const ZERO: Decimal = Decimal::from_parts_raw(0, 0, 0, 0);
+const ONE: Decimal = Decimal::from_parts_raw(1, 0, 0, 0);
 const TWO: Decimal = Decimal::from_parts_raw(2, 0, 0, 0);
 const PI: Decimal = Decimal::from_parts_raw(1102470953, 185874565, 1703060790, 1835008);
 const LN2: Decimal = Decimal::from_parts_raw(2831677809, 328455696, 3757558395, 1900544);
@@ -60,7 +65,7 @@ impl MathematicalOps for Decimal {
         let mut term = *self;
         let mut result = self + Decimal::one();
         let mut prev_result = Decimal::zero();
-        let mut factorial = Decimal::one();
+         let mut factorial = Decimal::one();
         let mut n = TWO;
         let twenty_four = Decimal::new(24, 0);
 
@@ -176,6 +181,106 @@ impl MathematicalOps for Decimal {
     }
 }
 
+///
+///
+///
+impl Product for Decimal {
+    fn product<I>(iter: I) -> Decimal {
+        todo!()
+    }
+}
+
+impl NumCast for Decimal {
+    fn from<F: ToPrimitive>(n: F) -> Option<Self> {
+        //NumCast::from(n).map(self)
+        todo!()
+    }
+}
+
+impl Float for Decimal {
+    fn nan() -> Decimal { panic!("Nan is not supported"); }
+    fn infinity() -> Decimal {   panic!("infinity is not supported");}
+    fn neg_infinity() -> Decimal { panic!("neg_infinity is not supported"); }
+    fn neg_zero() -> Decimal { panic!("Nan is not supported"); }
+    fn min_value() -> Decimal { panic!("Nan is not supported"); }
+    fn min_positive_value() -> Decimal { panic!("Nan is not supported"); }
+    fn max_value() -> Decimal { Decimal::max_value() }
+    fn is_nan(self) -> bool { todo!() }
+    fn is_infinite(self) -> bool { todo!() }
+    fn is_finite(self) -> bool { todo!() }
+    fn is_normal(self) -> bool { todo!() }
+    fn classify(self) -> FpCategory {  todo!() }
+    fn floor(self) -> Decimal { Decimal::floor(&self) }
+    fn ceil(self) -> Decimal { Decimal::ceil(&self) }
+    fn round(self) -> Decimal { Decimal::round(&self) }
+    fn trunc(self) -> Decimal { Decimal::trunc(&self) }
+    fn fract(self) -> Decimal { panic!("Nan is not supported"); }
+    fn abs(self) -> Decimal { Decimal::abs(&self) }
+    fn signum(self) -> Decimal { panic!("Nan is not supported"); }
+    fn is_sign_positive(self) -> bool { Decimal::is_sign_positive(&self) }
+    fn is_sign_negative(self) -> bool { Decimal::is_sign_negative(&self) }
+    fn mul_add(self, a: Self, b: Self) -> Decimal { todo!() }
+    fn recip(self) -> Decimal { panic!("recip is not supported"); }
+    fn powi(self, n: i32) -> Decimal { MathematicalOps::powi(&self,n as u64) }
+    fn powf(self, n: Decimal) -> Decimal {
+//        let self_str = self.to_string();
+//        match self_str {
+//            "1.0" => self
+//            }
+        match n {
+//            ZERO => Decimal::one(),
+//            ONE => self,
+//            TWO => self * self,
+            _ => {
+                if n < ZERO {
+                    Decimal::one() / MathematicalOps::exp(&(n * MathematicalOps::ln(&self)))
+                } else {
+                    MathematicalOps::exp(&(n * MathematicalOps::ln(&self)))
+                }
+            }
+        }
+    }
+    fn sqrt(self) -> Decimal { MathematicalOps::sqrt(&self).unwrap() }
+    fn exp(self) -> Decimal { MathematicalOps::exp(&self)}
+    fn exp2(self) -> Decimal { panic!("Nan is not supported"); }
+    fn ln(self) -> Decimal { MathematicalOps::ln(&self)}
+    fn log(self, base: Self) -> Decimal { panic!("Nan is not supported"); }
+    fn log2(self) -> Decimal { panic!("Nan is not supported"); }
+    fn log10(self) -> Decimal { panic!("Nan is not supported"); }
+    fn max(self, other: Self) -> Decimal { panic!("Nan is not supported"); }
+    fn min(self, other: Self) -> Decimal { panic!("Nan is not supported"); }
+    fn abs_sub(self, other: Self) -> Decimal { panic!("Nan is not supported"); }
+    fn cbrt(self) -> Decimal { panic!("Nan is not supported"); }
+    fn hypot(self, other: Self) ->Decimal { panic!("Nan is not supported"); }
+    fn sin(self) -> Decimal { panic!("Nan is not supported"); }
+    fn cos(self) -> Decimal { panic!("Nan is not supported"); }
+    fn tan(self) -> Decimal { panic!("Nan is not supported"); }
+    fn asin(self) -> Decimal { panic!("Nan is not supported"); }
+    fn acos(self) -> Decimal { panic!("Nan is not supported"); }
+    fn atan(self) -> Decimal { panic!("Nan is not supported"); }
+    fn atan2(self, other: Self) -> Decimal { panic!("Nan is not supported"); }
+    fn sin_cos(self) -> (Self, Self) {
+        todo!()
+//        let (a, b) = self.sin_cos();
+//        (Decimal(a), Decimal(b))
+    }
+    fn exp_m1(self) -> Decimal { panic!("Nan is not supported"); }
+    fn ln_1p(self) -> Decimal { panic!("Nan is not supported"); }
+    fn sinh(self) -> Decimal { panic!("Nan is not supported"); }
+    fn cosh(self) -> Decimal { panic!("Nan is not supported"); }
+    fn tanh(self) -> Decimal { panic!("Nan is not supported"); }
+    fn asinh(self) -> Decimal { panic!("Nan is not supported"); }
+    fn acosh(self) -> Decimal { panic!("Nan is not supported"); }
+    fn atanh(self) -> Decimal { panic!("Nan is not supported"); }
+    fn integer_decode(self) -> (u64, i16, i8) { self.integer_decode() }
+    fn epsilon() -> Decimal { panic!("Nan is not supported"); }
+    fn to_degrees(self) -> Decimal { panic!("Nan is not supported"); }
+    fn to_radians(self) -> Decimal { panic!("Nan is not supported"); }
+}
+
+
+
+
 /// Returns the convergence of both the arithmetic and geometric mean.
 /// Used internally.
 fn arithmetic_geo_mean_of_2(a: &Decimal, b: &Decimal) -> Decimal {
@@ -196,7 +301,7 @@ fn mean_of_2(a: &Decimal, b: &Decimal) -> Decimal {
 
 /// The geometric mean. Used internally.
 fn geo_mean_of_2(a: &Decimal, b: &Decimal) -> Decimal {
-    (a * b).sqrt().unwrap()
+    (a * b).sqrt()//.unwrap()
 }
 
 #[cfg(test)]
